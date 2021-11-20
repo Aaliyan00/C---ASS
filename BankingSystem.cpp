@@ -1,20 +1,16 @@
-/******************************************************************************
+// Aaliyan Khan
+// 2019A7PS0025U
 
-Welcome to GDB Online.
-GDB online is an online compiler and debugger tool for C, C++, Python, PHP, Ruby,
-C#, VB, Perl, Swift, Prolog, Javascript, Pascal, HTML, CSS, JS
-Code, Compile, Run and Debug online from anywhere in world.
-
-*******************************************************************************/
 #include <iostream>
 #include <stdio.h>
 #include <string>
 #include <fstream>
-#include<stdlib.h>
+#include <stdlib.h>
 
 using namespace std;
 void NewAccount();
-void ExistingAccount();
+// void ExistingAccount();
+
 void typeChecker(int acc_type)
 {
     if (acc_type == '1' || acc_type == 1)
@@ -36,10 +32,11 @@ void typeChecker(int acc_type)
 
 class Account
 {
+public:
     string customer_name, pin;
     int account_no, account_type;
+    float account_balance;
 
-public:
     // for new Account
     Account(string cust_name, int acc_type, string pin_no)
     {
@@ -54,16 +51,18 @@ public:
             cout << "PIN must be of 4 digits \n";
             NewAccount();
         }
-        int temp=rand()%1000000;
-        
+        int temp = rand() % 1000000;
+        account_balance = 0.0;
     }
 
     // for existing Account
-    Account(string cust_name, int acc_no, string pin_no, int acc_type)
+    Account(string cust_name, int acc_no, string pin_no, int acc_type, float balance, string name)
     {
         customer_name = cust_name;
         account_no = acc_no;
         account_type = acc_type;
+        account_balance = balance;
+        customer_name = name;
         if (pin_no.length() == 4)
         {
             pin = pin_no;
@@ -71,7 +70,7 @@ public:
         else
         {
             cout << "PIN must be of 4 digits \n";
-            ExistingAccount();
+            // ExistingAccount();
         }
     }
 };
@@ -94,43 +93,65 @@ void NewAccount()
     // adding to txt file
     ofstream fout;
     fout.open("account.txt");
-    fout << { << name << };
+    fout << '{' << name << '}';
 }
 
-void ExistingAccount()
-{
-    string name;
-    string pin;
-    int accNo, type;
-    cout << "WELCOME \n";
-    cout << "Enter name \n";
-    cin >> name;
-    cout << "Enter Account Number \n";
-    cin >> accNo;
-    cout << "Enter 1 for Current account 2 for Savings Account \n";
-    cin >> type;
-    cout << "Enter pin \n";
-    cin >> pin;
-    Account acc(name, accNo, pin, type);
-    typeChecker(type);
+// void ExistingAccount()
+// {
+//     string name;
+//     string pin;
+//     string details;
+//     int accNo, type;
+//     cout << "WELCOME \n";
+//     cout << "Enter name \n";
+//     cin >> name;
+//     cout << "Enter Account Number \n";
+//     cin >> accNo;
+//     cout << "Enter pin \n";
+//     cin >> pin;
+//     cout << "Enter 1 for Current account 2 for Savings Account \n";
+//     cin >> type;
+//     Account acc(name, accNo, pin, type);
+//     typeChecker(type);
+// }
 
-    accountChecker();
-}
-
-Account accountChecker(Account inAcc)
+void tokenize(string s, string del, string temp[])
 {
+    int start = 0;
+    int end = s.find(del);
+    int i = 0;
+    while (end != -1)
+    {
+        temp[i] = s.substr(start, end - start);
+        // cout << s.substr(start, end - start) << endl;
+        start = end + del.size();
+        end = s.find(del, start);
+        i++;
+    }
+    // cout << s.substr(start, end - start);
 }
 
 int main()
 {
+    // Account acc[100];
+    Account *acc = (Account *)malloc(sizeof(Account) * 100);
+    int i = 0;
+    string temp[100];
     // file handling
-    string line;
+    string line, data;
     ifstream fin;
     ofstream fout;
     fin.open("account.txt");
     if (fin)
     {
         cout << "file exists \n";
+        while (getline(fin, data))
+        {
+            cout << data<<endl;
+            tokenize(data, "-", temp);
+            acc[i] = Account(temp[4], stoi(temp[0]), temp[1], stoi(temp[3]), stof(temp[2]), temp[4]);
+            i++;
+        }
     }
     else
     {
@@ -144,7 +165,7 @@ int main()
     // existing account
     if (acc_status == 1)
     {
-        ExistingAccount();
+        // ExistingAccount();
     }
 
     // new account
